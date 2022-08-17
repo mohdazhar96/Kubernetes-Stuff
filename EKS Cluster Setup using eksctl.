@@ -1,0 +1,140 @@
+Prerequisites: 
+
+→ ec2 instance
+→ kubectl
+→ eksctl
+→  [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html) or the [aws-iam-authenticator](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)  on the system where you are launching `eksctl`
+.
+
+**To install or update `eksctl`**
+
+1. Determine whether you already have `eksctl` installed on your device.
+    
+    ```
+    
+    eksctl version
+    
+    ```
+    
+    If you have `eksctl` installed in the path of your device, the example output is as follows. If you want to update the version that you currently have installed with a later version, complete the next step, making sure to install the new version in the same location that your current version is in.
+    
+    ```
+    
+    0.108.0
+    ```
+    
+    If you receive no output, then you either don't have `eksctl` installed, or it's not installed in a location that's in your device's path.
+    
+2. You can install `eksctl` on `macOS`, Linux, or Windows
+    - macOS
+    - Linux
+    - Windows
+    
+    **To install or update `eksctl` on Linux**
+    
+    1. Download and extract the latest release of `eksctl` with the following command.
+        
+        ```
+        
+        curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+        
+        ```
+        
+    2. Move the extracted binary to `/usr/local/bin`.
+        
+        ```
+        
+        sudo mv /tmp/eksctl /usr/local/bin
+        
+        ```
+        
+    3. Test that your installation was successful with the following command.
+        
+        ```
+        
+        eksctl version
+        ```
+        
+
+**Install or update `kubectl` on `macOS`, Linux, and Windows operating systems.**
+
+- macOS
+- Linux
+- Windows
+
+**To install or update `kubectl` on Linux**
+
+ Download the `kubectl` binary for your cluster's Kubernetes version from Amazon S3 using the command for your device's hardware platform. The first link for each version is for `amd64` and the second link is for `arm64`.
+    - Kubernetes `1.23`
+        
+        ```
+        
+        curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.23.7/2022-06-29/bin/linux/amd64/kubectl
+         OR
+        ```
+        
+        ```
+        
+        curl -o kubectl https://s3.us-west-2.amazonaws.com/amazon-eks/1.23.7/2022-06-29/bin/linux/arm64/k
+        ```
+        
+        1. Apply execute permissions to the binary.
+            
+            ```
+            
+            chmod +x ./kubectl
+            
+            ```
+            
+        2. Copy the binary to a folder in your `PATH`. If you have already installed a version of `kubectl`, then we recommend creating a `$HOME/bin/kubectl` and ensuring that `$HOME/bin` comes first in your `$PATH`.
+            
+            ```
+            
+            mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+            
+            ```
+            
+        3. (Optional) Add the `$HOME/bin` path to your shell initialization file so that it is configured when you open a shell.
+            
+            **Note**
+            
+            This step assumes you are using the Bash shell; if you are using another shell, change the command to use your specific shell initialization file.
+            
+            ```
+            
+            echo 'export PATH=$PATH:$HOME/bin' >> ~/.bashrc
+            
+            ```
+            
+        4. After you install `kubectl`, you can verify its version with the following command:
+            
+            ```
+            
+            kubectl version --short --client
+            ```
+            
+  **Create an IAM Role and attache it to EC2 instance**
+  `Note: create IAM user with programmatic access if your bootstrap system is outside of AWS`IAM user should have access toIAMEC2VPCCloudFormation
+  
+         **Create your cluster and nodes**
+            
+            `eksctl create cluster --name cluster-name  \
+            --region region-name \
+            --node-type instance-type \
+            --nodes-min 2 \
+            --nodes-max 2 \ 
+            --zones <AZ-1>,<AZ-2>
+            
+            example:
+            eksctl create cluster --name my-k8s-cluster \
+               --region us-east-2 \
+            --node-type t2.medium \`
+            
+        ** To delete the EKS clsuter **
+            
+            `eksctl delete cluster valaxy --region ap-south-1`
+            
+        ** Validate your cluster using by creating by checking nodes and by creating a pod **
+            
+            `kubectl get nodes
+            kubectl run pod tomcat --image=tomcat`
