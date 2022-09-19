@@ -1,0 +1,88 @@
+RKE2 -Server Setup(Master):
+
+sudo mkdir -p /etc/rancher/rke2/
+
+--------------------------------------------------------------------------------------------
+->create the RKE2 config file at /etc/rancher/rke2/config.yaml using the following example:
+
+tls-san:
+  - my-kubernetes-domain.com
+
+--------------------------------------------------------------------------------------------
+#change the below version to required one 
+
+curl -sfL https://get.rke2.io | INSTALL_RKE2_CHANNEL=v1.20 sh -
+systemctl enable rke2-server.service
+systemctl start rke2-server.service
+
+------------------------------------------------------------------------------------------
+rke2-agent setup (Worker):
+-------------------------------------------------------------------------
+STEP-1
+sudo mkdir -p /etc/rancher/rke2/
+
+
+
+--------------------------------------------------------------------------
+STEP-2 = link rancher server with rancher agent
+
+
+
+  # change the ip to reflect your rancher1 ip
+
+
+
+
+  echo "server: https://$RANCHER-SERVER1_IP:9345" > /etc/rancher/rke2/config.yaml
+
+
+
+  # change the Token to the one from rancher1 /var/lib/rancher/rke2/server/node-token
+
+
+
+
+   echo "token: $TOKEN" >> /etc/rancher/rke2/config.yaml
+
+
+
+-----------------------------------------------------------------------------------
+STEP-3
+
+#Change the vesion below to required one 
+
+curl -sfL https://get.rke2.io | INSTALL_RKE2_CHANNEL=v1.20 INSTALL_RKE2_TYPE="agent" sh -
+
+
+
+-----------------------------------------------------------------------------------
+STEP-4
+
+systemctl enable rke2-agent.service
+systemctl start rke2-agent.service
+
+
+
+
+-----------------------------------------------------------------------------------
+
+kubectl commands: (RKE2-server)
+
+sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get nodes
+sudo /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml get po -o wide
+
+
+
+-------------------------------------------------------------------------------------
+Steps to execute RKE2-server to eliminate the use of complete Kubectl path:
+
+
+Copying rke2.yaml into .kube/config location to use kubectl command without passing the path.
+
+
+sudo -i
+cp /etc/rancher/rke2/rke2.yaml .kube/config
+cp /var/lib/rancher/rke2/bin/kubectl /usr/bin/
+
+
+----------------------------------------------------------------------------------
